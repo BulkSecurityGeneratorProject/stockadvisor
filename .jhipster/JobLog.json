@@ -1,0 +1,26 @@
+{
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "jobId",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "runType",
+      "fieldType": "JobRunType",
+      "fieldValues": "MANUAL,SCHEDULED"
+    },
+    {
+      "fieldName": "runDate",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "changelogDate": "20160808230101",
+  "entityTableName": "job_log",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no"
+}

@@ -1,0 +1,76 @@
+
+<form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                ng-click="vm.clear()">&times;</button>
+        <h4 class="modal-title" id="myAlertTypeLabel">Create or edit a Alert Type</h4>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" ng-show="vm.alertType.id">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                    ng-model="vm.alertType.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_name">Name</label>
+            <input type="text" class="form-control" name="name" id="field_name"
+                    ng-model="vm.alertType.name"
+                    required />
+            <div ng-show="editForm.name.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.name.$error.required">
+                    This field is required.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_fqdn">Fqdn</label>
+            <input type="text" class="form-control" name="fqdn" id="field_fqdn"
+                    ng-model="vm.alertType.fqdn"
+                    required />
+            <div ng-show="editForm.fqdn.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.fqdn.$error.required">
+                    This field is required.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_paramType">Param Type</label>
+            <select class="form-control" name="paramType" ng-model="vm.alertType.paramType" id="field_paramType">
+                <option value="STRING">STRING</option>
+                <option value="NUMBER">NUMBER</option>
+                <option value="RANGE">RANGE</option>
+                <option value="CSV">CSV</option>
+                <option value="CONTAINS">CONTAINS</option>
+                <option value="STARTWITH">STARTWITH</option>
+                <option value="ENDSWITH">ENDSWITH</option>
+                <option value="TOKENIZE_SEMICOLON" translate="stockadvisorApp.ParamType.TOKENIZE_SEMICOLON">TOKENIZE_SEMICOLON</option>
+                <option value="CUSTOM">CUSTOM</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_paramValue">Param Value</label>
+            <input type="text" class="form-control" name="paramValue" id="field_paramValue"
+                    ng-model="vm.alertType.paramValue"
+                     />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_description">Description</label>
+            <input type="text" class="form-control" name="description" id="field_description"
+                    ng-model="vm.alertType.description"
+                     />
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="vm.clear()">
+            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" ng-disabled="editForm.$invalid || vm.isSaving" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>

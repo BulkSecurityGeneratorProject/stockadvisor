@@ -1,0 +1,55 @@
+
+<form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                ng-click="vm.clear()">&times;</button>
+        <h4 class="modal-title" id="myJobLogLabel">Create or edit a Job Log</h4>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" ng-show="vm.jobLog.id">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                    ng-model="vm.jobLog.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_jobId">Job Id</label>
+            <input type="text" class="form-control" name="jobId" id="field_jobId"
+                    ng-model="vm.jobLog.jobId"
+                    required />
+            <div ng-show="editForm.jobId.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.jobId.$error.required">
+                    This field is required.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_runType">Run Type</label>
+            <select class="form-control" name="runType" ng-model="vm.jobLog.runType" id="field_runType">
+                <option value="MANUAL">MANUAL</option>
+                <option value="SCHEDULED">SCHEDULED</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="field_runDate">Run Date</label>
+                <div class="input-group">
+                    <input id="field_runDate" type="text" class="form-control" name="runDate" datetime-picker="{{dateformat}}" ng-model="vm.jobLog.runDate" is-open="vm.datePickerOpenStatus.runDate"
+                      />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="vm.openCalendar('runDate')"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="vm.clear()">
+            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" ng-disabled="editForm.$invalid || vm.isSaving" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>

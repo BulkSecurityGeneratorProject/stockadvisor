@@ -1,0 +1,48 @@
+entity Watchlist{
+	 symbol String required,
+     entryPrice Double required,
+     entryDate LocalDate required
+  }
+
+entity Source{
+	 name String required,
+  	 description String,
+     link String
+}
+
+relationship ManyToMany {
+	Watchlist{source(name)} to Source{watchlist}
+}
+
+enum ParamType{
+	STRING, NUMBER, RANGE, CSV, CONTAINS, STARTWITH, ENDSWITH, TOKENIZE_SEMICOLON,CUSTOM
+}
+
+entity AlertType{
+	name String required,
+	fqdn String required,
+	paramType ParamType,
+	paramValue String,
+	description String
+}
+
+relationship ManyToMany {
+	Watchlist{alert(name)} to AlertType{watchlist}
+}
+
+entity AlertHistory{
+	triggeredAt ZonedDateTime
+}
+
+relationship OneToMany {
+	Watchlist{alertHistory} to AlertHistory{watchlist}
+}
+
+enum JobRunType{
+	MANUAL, SCHEDULED
+}
+entity JobLog{
+	jobId String required,
+	runType JobRunType,
+	runDate ZonedDateTime
+}

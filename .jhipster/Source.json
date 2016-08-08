@@ -1,0 +1,33 @@
+{
+  "relationships": [
+    {
+      "relationshipType": "many-to-many",
+      "relationshipName": "watchlist",
+      "otherEntityName": "watchlist",
+      "ownerSide": false,
+      "otherEntityRelationshipName": "source"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "link",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20160808230158",
+  "entityTableName": "source",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no"
+}

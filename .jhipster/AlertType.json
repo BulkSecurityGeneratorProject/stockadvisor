@@ -1,0 +1,45 @@
+{
+  "relationships": [
+    {
+      "relationshipType": "many-to-many",
+      "relationshipName": "watchlist",
+      "otherEntityName": "watchlist",
+      "ownerSide": false,
+      "otherEntityRelationshipName": "alert"
+    }
+  ],
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "fqdn",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "paramType",
+      "fieldType": "ParamType",
+      "fieldValues": "STRING,NUMBER,RANGE,CSV,CONTAINS,STARTWITH,ENDSWITH,TOKENIZE_SEMICOLON,CUSTOM"
+    },
+    {
+      "fieldName": "paramValue",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20160808230159",
+  "entityTableName": "alert_type",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no"
+}

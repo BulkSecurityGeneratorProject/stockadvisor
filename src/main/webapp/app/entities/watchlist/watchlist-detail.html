@@ -1,0 +1,43 @@
+
+<div>
+    <h2><span>Watchlist</span> {{vm.watchlist.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span>Symbol</span></dt>
+        <dd>
+            <span>{{vm.watchlist.symbol}}</span>
+        </dd>
+        <dt><span>Entry Price</span></dt>
+        <dd>
+            <span>{{vm.watchlist.entryPrice}}</span>
+        </dd>
+        <dt><span>Entry Date</span></dt>
+        <dd>
+            <span>{{vm.watchlist.entryDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Source</span></dt>
+        <dd>
+            <span ng-repeat="source in vm.watchlist.sources">
+                <a ui-sref="source-detail({id: source.id})">{{source.name}}</a>{{$last ? '' : ', '}}
+            </span>
+        </dd>
+        <dt><span>Alert</span></dt>
+        <dd>
+            <span ng-repeat="alert in vm.watchlist.alerts">
+                <a ui-sref="alert-type-detail({id: alert.id})">{{alert.name}}</a>{{$last ? '' : ', '}}
+            </span>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button" ui-sref="watchlist-detail.edit({id:vm.watchlist.id})" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="hidden-xs hidden-sm"> Edit</span>
+    </button>
+</div>

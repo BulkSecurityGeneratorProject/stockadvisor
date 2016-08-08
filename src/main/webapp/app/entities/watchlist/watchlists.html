@@ -1,0 +1,72 @@
+<div>
+    <h2>Watchlists</h2>
+    <jhi-alert></jhi-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 no-padding-left">
+                <button class="btn btn-primary" ui-sref="watchlist.new" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span >
+                        Create new Watchlist
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+                <tr>
+                    <th><span>ID</span></th>
+                    <th><span>Symbol</span></th>
+                    <th><span>Entry Price</span></th>
+                    <th><span>Entry Date</span></th>
+                    <th><span>Source</span></th>
+                    <th><span>Alert</span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="watchlist in vm.watchlists track by watchlist.id">
+                    <td><a ui-sref="watchlist-detail({id:watchlist.id})">{{watchlist.id}}</a></td>
+                    <td>{{watchlist.symbol}}</td>
+                    <td>{{watchlist.entryPrice}}</td>
+                        <td>{{watchlist.entryDate | date:'mediumDate'}}</td>
+                    <td>
+                        <span ng-repeat="source in watchlist.sources">
+                            <a class="form-control-static" ui-sref="source-detail({id: source.id})">{{source.name}}</a>{{$last ? '' : ', '}}
+                        </span>
+                    </td>
+                    <td>
+                        <span ng-repeat="alert in watchlist.alerts">
+                            <a class="form-control-static" ui-sref="alert-type-detail({id: alert.id})">{{alert.name}}</a>{{$last ? '' : ', '}}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    ui-sref="watchlist-detail({id:watchlist.id})"
+                                    class="btn btn-info btn-sm">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="watchlist.edit({id:watchlist.id})"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="watchlist.delete({id:watchlist.id})"
+                                    class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
