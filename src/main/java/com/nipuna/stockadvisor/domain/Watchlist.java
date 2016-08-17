@@ -14,7 +14,8 @@ import java.util.Objects;
  * A Watchlist.
  */
 @Entity
-@Table(name = "watchlist")
+@Table(name = "watchlist", uniqueConstraints = @UniqueConstraint(columnNames = { "symbol", "entry_date",
+		"entry_price" }))
 public class Watchlist implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,7 +46,8 @@ public class Watchlist implements Serializable {
                inverseJoinColumns = @JoinColumn(name="sources_id", referencedColumnName="ID"))
     private Set<Source> sources = new HashSet<>();
 
-    @ManyToMany
+    //Solve “failed to lazily initialize a collection of role” exception
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name = "watchlist_alert",
                joinColumns = @JoinColumn(name="watchlists_id", referencedColumnName="ID"),
                inverseJoinColumns = @JoinColumn(name="alerts_id", referencedColumnName="ID"))
