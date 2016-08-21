@@ -10,10 +10,6 @@ public abstract class BaseAlertChecker implements AlertChecker {
 	private String paramValue;
 	private ParamType paramType;
 
-	public BaseAlertChecker(Stock stock) {
-		this.stock = stock;
-	}
-
 	public void setStock(Stock stock) {
 		this.stock = stock;
 	}

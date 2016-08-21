@@ -1,5 +1,8 @@
-id;name;description;link
-1;Mad Money;Stocks Mentioned in Mad Money;http://www.thestreet.com
-2;StockTwits;Trending stocks from StockTwits;http://www.stocktwits.com
-3;Motley Fool;Stocks from Motley Fool;http://www.fool.com
-4;Seeking Alpha;Stocks from Seeking Alpha;http://www.seekingalpha.com
+id;name;fqdn;param_type;param_value;description
+1;Price 5% Up;PricePctIncreaseChecker;NUMBER;5;
+2;Price 5% Down;PricePctDecreseChecker;NUMBER;5;
+3;Volume 5% Up;AvgVolumeIncreaseAlertChecker;NUMBER;5;
+4;52 Wk High;YearHighAlertChecker;NOT_APPLICABLE;;
+5;52 Wk Low;YearLowAlertChecker;NOT_APPLICABLE;;
+6;Price 10% Up;PricePctIncreaseChecker;NUMBER;10;
+7;Price 10% Down;PricePctDecreseChecker;NUMBER;10;

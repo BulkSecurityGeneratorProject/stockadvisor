@@ -1,8 +1,0 @@
-id;name;fqdn;param_type;param_value;description
-1;Price 5% Up;PricePctIncreaseChecker;NUMBER;5;
-2;Price 5% Down;PricePctDecreseChecker;NUMBER;5;
-3;Volume 5% Up;AvgVolumeIncreaseAlertChecker;NUMBER;5;
-4;52 Wk High;YearHighAlertChecker;;;
-5;52 Wk Low;YearLowAlertChecker;;;
-6;Price 10% Up;PricePctIncreaseChecker;NUMBER;10;
-7;Price 10% Down;PricePctDecreseChecker;NUMBER;10;

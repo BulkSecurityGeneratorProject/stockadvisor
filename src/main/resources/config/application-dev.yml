@@ -87,3 +87,15 @@ jhipster:
             host: localhost
             port: 5000
             queueSize: 512
+# ===================================================================
+# Stock advisor specific properties
+# ===================================================================
+# // http://crontab.guru/#0/15_9-17_*_*_MON-FRI
+stockadvisor:
+              jobs:
+                 madmoney:
+                   schedule: "* 0/5 * * * *"
+                 stockalert:
+                   schedule: "* 0/5 * * * *"
+                 heartbeat:
+                   schedule: "* 0/5 * * * *"

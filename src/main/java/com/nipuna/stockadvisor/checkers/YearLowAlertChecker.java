@@ -1,17 +1,14 @@
 package com.nipuna.stockadvisor.checkers;
 
-import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 public class YearLowAlertChecker extends BaseAlertChecker {
 
-	public YearLowAlertChecker(Stock stock) {
-		super(stock);
-	}
-
 	public boolean check() {
 		StockQuote quote = getStock().getQuote();
-		return quote.getPrice().doubleValue() <= quote.getYearLow().doubleValue();
+		boolean dayLow = quote.getDayLow().doubleValue() <= quote.getYearLow().doubleValue();
+		boolean priceLow = quote.getPrice().doubleValue() <= quote.getYearLow().doubleValue();
+		return dayLow || priceLow;
 	}
 
 	public String desc() {

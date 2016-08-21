@@ -1,13 +1,8 @@
 package com.nipuna.stockadvisor.checkers;
 
-import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 public class PriceBelowAlertChecker extends BaseAlertChecker {
-
-	public PriceBelowAlertChecker(Stock stock) {
-		super(stock);
-	}
 
 	public boolean check() {
 		StockQuote quote = getStock().getQuote();

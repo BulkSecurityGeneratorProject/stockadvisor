@@ -15,5 +15,5 @@ import javax.persistence.NamedQuery;
 public interface JobLogRepository extends JpaRepository<JobLog, Long> {
 
 	@Query("select jobLog from JobLog jobLog where jobLog.jobId = ?1")
-	List<JobLog> findByJobId(String emailAddress);
+	List<JobLog> findByJobId(String jobId);
 }

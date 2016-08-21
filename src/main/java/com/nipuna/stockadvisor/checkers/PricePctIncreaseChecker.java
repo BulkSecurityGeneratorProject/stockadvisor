@@ -2,14 +2,9 @@ package com.nipuna.stockadvisor.checkers;
 
 import java.math.BigDecimal;
 
-import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 public class PricePctIncreaseChecker extends BaseAlertChecker {
-
-	public PricePctIncreaseChecker(Stock stock) {
-		super(stock);
-	}
 
 	public boolean check() {
 		StockQuote quote = getStock().getQuote();

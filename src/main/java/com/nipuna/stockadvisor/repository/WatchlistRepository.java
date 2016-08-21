@@ -1,11 +1,13 @@
 package com.nipuna.stockadvisor.repository;
 
-import com.nipuna.stockadvisor.domain.Watchlist;
+import java.time.LocalDate;
+import java.util.List;
 
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import com.nipuna.stockadvisor.domain.Watchlist;
 
 /**
  * Spring Data JPA repository for the Watchlist entity.
@@ -18,5 +20,8 @@ public interface WatchlistRepository extends JpaRepository<Watchlist,Long> {
 
     @Query("select watchlist from Watchlist watchlist left join fetch watchlist.sources left join fetch watchlist.alerts where watchlist.id =:id")
     Watchlist findOneWithEagerRelationships(@Param("id") Long id);
+    
+    @Query("select w from Watchlist w left join fetch w.sources s where w.entryDate=:entry_date and s.name=:source")
+    List<Watchlist> findWatchListEnteredByDateAndSource(@Param("source") String source, @Param("entry_date") LocalDate entry_date);
 
 }

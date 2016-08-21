@@ -5,10 +5,6 @@ import yahoofinance.quotes.stock.StockQuote;
 
 public class PriceAboveAlertChecker extends BaseAlertChecker {
 
-	public PriceAboveAlertChecker(Stock stock) {
-		super(stock);
-	}
-
 	public boolean check() {
 		StockQuote quote = getStock().getQuote();
 		return quote.getDayHigh().doubleValue() > Double.valueOf(getParamValue());

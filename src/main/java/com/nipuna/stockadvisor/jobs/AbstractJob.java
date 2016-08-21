@@ -10,8 +10,11 @@ import com.nipuna.stockadvisor.domain.JobLog;
 import com.nipuna.stockadvisor.domain.enumeration.JobRunType;
 import com.nipuna.stockadvisor.repository.JobLogRepository;
 import com.nipuna.stockadvisor.util.EmailSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractJob {
+	protected static final Logger LOG = LoggerFactory.getLogger(AbstractJob.class.getName());
 
 	protected static final ZoneId ZONEID_EST = ZoneId.of("America/New_York");
 	@Autowired

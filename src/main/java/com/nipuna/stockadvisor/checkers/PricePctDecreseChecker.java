@@ -7,10 +7,6 @@ import yahoofinance.quotes.stock.StockQuote;
 
 public class PricePctDecreseChecker extends BaseAlertChecker {
 
-	public PricePctDecreseChecker(Stock stock) {
-		super(stock);
-	}
-
 	public boolean check() {
 		StockQuote quote = getStock().getQuote();
 		BigDecimal change = quote.getChangeInPercent();

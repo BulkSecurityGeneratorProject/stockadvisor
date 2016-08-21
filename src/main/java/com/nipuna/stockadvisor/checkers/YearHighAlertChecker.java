@@ -5,13 +5,11 @@ import yahoofinance.quotes.stock.StockQuote;
 
 public class YearHighAlertChecker extends BaseAlertChecker {
 
-	public YearHighAlertChecker(Stock stock) {
-		super(stock);
-	}
-
 	public boolean check() {
 		StockQuote quote = getStock().getQuote();
-		return quote.getPrice().doubleValue() > quote.getYearLow().doubleValue();
+		boolean dayHigh = quote.getDayHigh().doubleValue() > quote.getYearHigh().doubleValue();
+		boolean priceHigh = quote.getPrice().doubleValue() >= quote.getYearHigh().doubleValue();
+		return dayHigh || priceHigh;
 	}
 
 	public String desc() {

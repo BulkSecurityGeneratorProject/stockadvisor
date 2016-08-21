@@ -8,7 +8,7 @@
 			<sqlCheck expectedResult="0">SELECT COUNT(*) FROM alert_type
 			</sqlCheck>
 		</preConditions>
-		<loadData encoding="UTF-8" file="config/liquibase/alertType.csv"
+		<loadData encoding="UTF-8" file="config/liquibase/alert_type.csv"
 			separator=";" tableName="alert_type">
 		</loadData>
 	</changeSet>

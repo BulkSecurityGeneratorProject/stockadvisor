@@ -127,5 +127,5 @@ public class WatchlistResource {
         watchlistRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("watchlist", id.toString())).build();
     }
-
+    
 }
