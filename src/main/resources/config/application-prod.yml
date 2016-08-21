@@ -109,3 +109,5 @@ stockadvisor:
                    schedule: "* 0 * * * *"
                heartbeat:
                    schedule: "* 0 * * * *"
+               manualstockentry:
+                   schedule: "* 0 * * * *"

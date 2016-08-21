@@ -1,0 +1,60 @@
+<div>
+    <h2>Manual Entry Stocks</h2>
+    <jhi-alert></jhi-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 no-padding-left">
+                <button class="btn btn-primary" ui-sref="manual-entry-stock.new" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span >
+                        Create new Manual Entry Stock
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+                <tr>
+                    <th><span>ID</span></th>
+                    <th><span>Symbols</span></th>
+                    <th><span>Entry Date</span></th>
+                    <th><span>Processed</span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="manualEntryStock in vm.manualEntryStocks track by manualEntryStock.id">
+                    <td><a ui-sref="manual-entry-stock-detail({id:manualEntryStock.id})">{{manualEntryStock.id}}</a></td>
+                    <td>{{manualEntryStock.symbols}}</td>
+                        <td>{{manualEntryStock.entryDate | date:'mediumDate'}}</td>
+                    <td>{{manualEntryStock.processed}}</td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    ui-sref="manual-entry-stock-detail({id:manualEntryStock.id})"
+                                    class="btn btn-info btn-sm">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="manual-entry-stock.edit({id:manualEntryStock.id})"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="manual-entry-stock.delete({id:manualEntryStock.id})"
+                                    class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="hidden-xs hidden-sm"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

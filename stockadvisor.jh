@@ -46,3 +46,8 @@ entity JobLog{
 	runType JobRunType,
 	runDate ZonedDateTime
 }
+
+entity ManualEntryStock{
+	 symbol String required,
+     entryDate LocalDate required
+  }

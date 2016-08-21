@@ -1,0 +1,31 @@
+{
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "symbols",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "entryDate",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "processed",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160821055029",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "manual_entry_stock",
+    "pagination": "no"
+}
