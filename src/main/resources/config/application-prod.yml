@@ -104,10 +104,14 @@ jhipster:
 stockadvisor:
              jobs:
                madmoney:
-                  schedule: "* 0 * * * *"
+                  #every two hours
+                  schedule: "* 30 9,11,13,15 * * MON-FRI"
                stockalert:
-                   schedule: "* 0 * * * *"
+                   schedule: "* 30 9-17 * * MON-FRI"
                heartbeat:
-                   schedule: "* 0 * * * *"
+                   schedule: "* 0 9,11,13,15,17 * * MON-FRI"
                manualstockentry:
-                   schedule: "* 0 * * * *"
+                   schedule: "* 0 9-17 * * MON-FRI"
+             mail:
+              sendto:
+              debug: false

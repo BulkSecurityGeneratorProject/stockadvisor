@@ -68,12 +68,12 @@ public class MadMoneyStockScraperJob extends AbstractJob {
 				String call = tdList.get(3).select("img").attr("alt");
 				String price = tdList.get(4).text();
 
-				if (existingSymbols.contains(symbol)) {
+				if (!existingSymbols.contains(symbol)) {
 					
 					Watchlist item = new Watchlist();
 					item.setSymbol(symbol);
 					item.setEntryPrice(Double.parseDouble(price.replace('$', ' ').trim()));
-					item.setEntryDate(LocalDate.parse(date + LocalDate.now().getYear(), formatter));// LocalDate.now(ZONEID_EST)
+					item.setEntryDate(LocalDate.parse(date +"/" +LocalDate.now().getYear(), formatter));// LocalDate.now(ZONEID_EST)
 					item.getSources().add(source);
 					item.getAlerts().addAll(allAlertTypes);
 					watchListRepository.save(item);

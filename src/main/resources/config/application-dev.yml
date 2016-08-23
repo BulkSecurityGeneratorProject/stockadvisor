@@ -39,10 +39,18 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
     mail:
-        host: localhost
-        port: 25
+        host: smtp.gmail.com
+        port: 587
+        ## USERNAME/PASSWORD comes from Heroku Cloud config
         username:
         password:
+        ## CUSTOMIZATION
+        protocol: smtp
+        tls: true
+        properties.mail.smtp:
+            auth: true
+            starttls.enable: true
+            ssl.trust: smtp.gmail.com
     messages:
         cache-seconds: 1
     thymeleaf:
@@ -94,10 +102,13 @@ jhipster:
 stockadvisor:
               jobs:
                  madmoney:
-                   schedule: "* 0/5 * * * *"
+                   schedule: "* 2/5 * * * *"
                  stockalert:
                    schedule: "* 0/5 * * * *"
                  heartbeat:
-                   schedule: "* 0/5 * * * *"
+                   schedule: "* 3/15 * * * *"
                  manualstockentry:
-                   schedule: "* 0/5 * * * *"
+                   schedule: "* 2/14 * * * *"
+              mail:
+               sendto:
+               debug: true

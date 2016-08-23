@@ -23,6 +23,7 @@ import com.nipuna.stockadvisor.domain.Watchlist;
 import com.nipuna.stockadvisor.repository.AlertHistoryRepository;
 import com.nipuna.stockadvisor.repository.WatchlistRepository;
 import com.nipuna.stockadvisor.util.EmailSender;
+import com.nipuna.stockadvisor.util.NumerToWordUtil;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -35,10 +36,9 @@ public class StockAlertsCheckerJob extends AbstractJob {
 
 	@Autowired
 	private WatchlistRepository watchListRepository;
-	
+
 	@Autowired
 	private AlertHistoryRepository alertHistoryRepository;
-	
 
 	private static final Map<String, AlertChecker> CHECKER_MAP = new HashMap<>();
 
@@ -56,7 +56,7 @@ public class StockAlertsCheckerJob extends AbstractJob {
 			String symbol = watchlist.getSymbol();
 			symbols.add(symbol);
 			subscriptionMap.put(symbol, subscriptions);
-			
+
 			watchListBySymbolMap.put(watchlist.getSymbol(), watchlist);
 		}
 
@@ -85,12 +85,13 @@ public class StockAlertsCheckerJob extends AbstractJob {
 					try {
 						checker = ensureCheckerCached(alertType);
 					} catch (Exception e) {
-						errorLog.append(e.getMessage() +"\n");
+						errorLog.append(e.getMessage() + "\n");
 						LOG.error("Error while checking if checker cached ", e);
+						continue;
 					}
 					checker.setParam(alertType.getParamType(), alertType.getParamValue());
 					checker.setStock(stock);
-					LOG.info("checking " + symbol + " for " + alertType);
+					LOG.debug("checking " + symbol + " for " + alertType);
 					log.append("checking " + symbol + " for " + alertType + "\n");
 
 					if (checker.check()) {
@@ -98,8 +99,8 @@ public class StockAlertsCheckerJob extends AbstractJob {
 						history.setTriggeredAt(ZonedDateTime.now());
 						history.setWatchlist(watchListBySymbolMap.get(symbol));
 						alertHistoryRepository.save(history);
-						EmailSender.sendEmail(checker.desc(),
-								stock.getQuote().toString() + "\n\n\n\n  LOG: " + log.toString() +" \n\n\n\n  ERROR LOG: " + errorLog.toString());
+						EmailSender.sendEmail(checker.desc(), getStockInfo(stock) + "\n\n\n\n  LOG: "
+								+ log.toString() + " \n\n\n\n  ERROR LOG: " + errorLog.toString());
 
 					}
 				}
@@ -122,5 +123,42 @@ public class StockAlertsCheckerJob extends AbstractJob {
 		}
 
 		return temp;
+	}
+
+	private String getStockInfo(Stock stock) {
+
+		StringBuffer sb = new StringBuffer();
+
+		sb.append("Price:\n");
+		sb.append("\t" + stock.getQuote().getPrice() + "\n\n");
+
+		sb.append("Year Range:\n");
+		sb.append("\t" + stock.getQuote().getYearLow() + "-" + stock.getQuote().getYearHigh() + "\n\n");
+
+		sb.append("Quote:\n");
+		sb.append("\t" + stock.getQuote() + "\n\n");
+
+		sb.append("Book Value per share:\n");
+		sb.append("\t" + stock.getStats().getBookValuePerShare().doubleValue() + "\n\n");
+
+		sb.append("1 Year price Target:\n");
+		sb.append("\t" + stock.getStats().getOneYearTargetPrice().doubleValue() + "\n\n");
+
+		sb.append("Market Cap:\n");
+		sb.append("\t" + NumerToWordUtil.format(stock.getStats().getMarketCap().longValue()) + "\n\n");
+
+		sb.append("Volume:\n");
+		sb.append("\t" + NumerToWordUtil.format(stock.getQuote().getVolume()) + "\n\n");
+
+		sb.append("Avg Volume(3m):\n");
+		sb.append("\t" + NumerToWordUtil.format(stock.getQuote().getAvgVolume()) + "\n\n");
+
+		sb.append("50 DMA:\n");
+		sb.append("\t" + stock.getQuote().getPriceAvg50() + "\n\n");
+
+		sb.append("200 DMA:\n");
+		sb.append("\t" + stock.getQuote().getPriceAvg200() + "\n\n");
+
+		return sb.toString();
 	}
 }
