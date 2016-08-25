@@ -48,6 +48,15 @@ relationship OneToMany {
 	Watchlist{comment} to WatchlistComment{watchlist}
 }
 
+entity WatchlistComment{
+	comment String required,
+	commentDate LocalDate
+}
+
+relationship OneToMany {
+	Watchlist{comment} to WatchlistComment{watchlist}
+}
+
 enum JobRunType{
 	MANUAL, SCHEDULED
 }

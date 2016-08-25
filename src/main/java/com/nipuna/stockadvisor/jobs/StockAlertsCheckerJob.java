@@ -27,6 +27,7 @@ import com.nipuna.stockadvisor.util.NumerToWordUtil;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
+import yahoofinance.histquotes.Interval;
 
 @Component
 @ConditionalOnProperty(prefix = "stockadvisor.jobs.stockalert", name = "schedule")
@@ -67,7 +68,7 @@ public class StockAlertsCheckerJob extends AbstractJob {
 
 		StringBuffer log = new StringBuffer();
 		StringBuffer errorLog = new StringBuffer();
-
+		
 		log.append("Watchlist: " + symbols + "\n");
 		errorLog.append("Watchlist: " + symbols + "\n");
 		LOG.info("Watchlist: " + symbols + "\n");
@@ -75,10 +76,14 @@ public class StockAlertsCheckerJob extends AbstractJob {
 
 		Set<Entry<String, Stock>> entries = stockMap.entrySet();
 		for (Entry<String, Stock> entry : entries) {
+			
+			int alertcount = 0;
 			Stock stock = entry.getValue();
 			String symbol = entry.getKey();
-
+			StringBuffer alertDesc = new StringBuffer();
+			StringBuffer alertNames = new StringBuffer();
 			Set<AlertType> alerts = subscriptionMap.get(symbol);
+			String stockInfo = getStockInfo(stock);
 			if (alerts != null) {
 				for (AlertType alertType : alerts) {
 					AlertChecker checker = null;
@@ -99,11 +104,16 @@ public class StockAlertsCheckerJob extends AbstractJob {
 						history.setTriggeredAt(ZonedDateTime.now());
 						history.setWatchlist(watchListBySymbolMap.get(symbol));
 						alertHistoryRepository.save(history);
-						EmailSender.sendEmail(checker.desc(), getStockInfo(stock) + "\n\n\n\n  LOG: "
-								+ log.toString() + " \n\n\n\n  ERROR LOG: " + errorLog.toString());
-
+						alertDesc.append("Multiple Alerts:\n"+checker.desc() +"\n\n");
+						alertNames.append(alertType.getName() +" ");
+						alertcount++;
 					}
 				}
+			}
+			
+			if(alertcount > 0){
+			EmailSender.sendEmail("Multiple alerts for "+stock.getSymbol() +" "+alertNames.toString(), alertDesc.toString() +"\n\n\n" +stockInfo + "\n\n\n\n  LOG: "
+					+ log.toString() + " \n\n\n\n  ERROR LOG: " + errorLog.toString());
 			}
 		}
 		performAudit();
@@ -129,8 +139,22 @@ public class StockAlertsCheckerJob extends AbstractJob {
 
 		StringBuffer sb = new StringBuffer();
 
+		sb.append("Name:\n");
+		sb.append("\t" + stock.getName() + "\n\n");
+		
 		sb.append("Price:\n");
 		sb.append("\t" + stock.getQuote().getPrice() + "\n\n");
+		
+		sb.append("% Change in Price:\n");
+		sb.append("\t" + stock.getQuote().getChangeInPercent() + "%\n\n");
+
+		sb.append("Day Range:\n");
+		sb.append("\t" + stock.getQuote().getDayLow() + "-" + stock.getQuote().getDayHigh() + "\n\n");
+
+//		sb.append("10 Day Low:\n");
+//		sb.append("20 Day Low:\n");
+//		sb.append("50 Day Low:\n");
+//		sb.append("100 Day Low:\n");
 
 		sb.append("Year Range:\n");
 		sb.append("\t" + stock.getQuote().getYearLow() + "-" + stock.getQuote().getYearHigh() + "\n\n");

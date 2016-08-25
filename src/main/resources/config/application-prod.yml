@@ -105,13 +105,13 @@ stockadvisor:
              jobs:
                madmoney:
                   #every two hours
-                  schedule: "* 30 9,11,13,15 * * MON-FRI"
+                  schedule: "* 35 9,11,13,15 * * MON-FRI"
                stockalert:
-                   schedule: "* 30 9-17 * * MON-FRI"
+                   schedule: "* 30 9-16 * * MON-FRI"
                heartbeat:
-                   schedule: "* 0 9,11,13,15,17 * * MON-FRI"
+                   schedule:  "* 0 9-16 * * MON-FRI"
                manualstockentry:
-                   schedule: "* 0 9-17 * * MON-FRI"
+                   schedule:  "* 0 9,11,13,16 * * MON-FRI"
              mail:
               sendto:
               debug: false
