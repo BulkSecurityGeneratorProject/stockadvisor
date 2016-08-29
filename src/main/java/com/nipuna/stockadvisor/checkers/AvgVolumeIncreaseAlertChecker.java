@@ -13,11 +13,19 @@ public class AvgVolumeIncreaseAlertChecker extends BaseAlertChecker {
 
 	public String desc() {
 		StockQuote quote = getStock().getQuote();
-		long increase =  quote.getVolume() - quote.getAvgVolume();
+		long increase = quote.getVolume() - quote.getAvgVolume();
 		long pct = (increase * 100) / quote.getVolume();
 		String vol = NumerToWordUtil.format(quote.getVolume().longValue());
 		String avg = NumerToWordUtil.format(quote.getAvgVolume().longValue());
-		return getStock().getSymbol() + " crossed AVG Volume(3m) by " + pct + "%. vol="+vol +", avg vol(3m)="+avg;
+		return getStock().getSymbol() + " crossed AVG Volume(3m) by " + pct + "%. vol=" + vol + ", avg vol(3m)=" + avg;
+	}
+
+	@Override
+	public String shortDesc() {
+		StockQuote quote = getStock().getQuote();
+		long increase = quote.getVolume() - quote.getAvgVolume();
+		long pct = (increase * 100) / quote.getVolume();
+		return "VOL +" + pct + "%";
 	}
 
 }

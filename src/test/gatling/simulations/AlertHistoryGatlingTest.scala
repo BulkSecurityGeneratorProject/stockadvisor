@@ -67,7 +67,7 @@ class AlertHistoryGatlingTest extends Simulation {
             .exec(http("Create new alertHistory")
             .post("/api/alert-histories")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "triggeredAt":"2020-01-01T00:00:00.000Z"}""")).asJSON
+            .body(StringBody("""{"id":null, "triggeredAt":"2020-01-01T00:00:00.000Z", "description":"SAMPLE_TEXT", "priority":null}""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_alertHistory_url"))).exitHereIfFailed
             .pause(10)

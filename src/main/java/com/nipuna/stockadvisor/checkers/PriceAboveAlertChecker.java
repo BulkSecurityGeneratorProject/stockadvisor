@@ -1,6 +1,5 @@
 package com.nipuna.stockadvisor.checkers;
 
-import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 public class PriceAboveAlertChecker extends BaseAlertChecker {
@@ -14,4 +13,8 @@ public class PriceAboveAlertChecker extends BaseAlertChecker {
 		return getStock().getSymbol() + " crossed "+getParamValue() +" now  @ "  + getStock().getQuote().getPrice().doubleValue();
 	}
 
+	@Override
+	public String shortDesc() {
+		return "52 WK low " + getStock().getQuote().getPrice().doubleValue();
+	}
 }

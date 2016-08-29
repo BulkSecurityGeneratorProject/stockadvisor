@@ -1,20 +1,13 @@
 package com.nipuna.stockadvisor.web.rest;
 
 import com.nipuna.stockadvisor.StockadvisorApp;
-import com.nipuna.stockadvisor.domain.AlertType;
-import com.nipuna.stockadvisor.domain.Source;
 import com.nipuna.stockadvisor.domain.Watchlist;
-import com.nipuna.stockadvisor.domain.enumeration.ParamType;
-import com.nipuna.stockadvisor.repository.AlertTypeRepository;
-import com.nipuna.stockadvisor.repository.SourceRepository;
 import com.nipuna.stockadvisor.repository.WatchlistRepository;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.*;
-
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -61,13 +54,7 @@ public class WatchlistResourceIntTest {
 
     @Inject
     private WatchlistRepository watchlistRepository;
-    
-    @Inject
-    private SourceRepository sourceRepository;
-    
-    @Inject
-    private AlertTypeRepository alertTypeRepository;
-    
+
     @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
@@ -255,85 +242,4 @@ public class WatchlistResourceIntTest {
         List<Watchlist> watchlists = watchlistRepository.findAll();
         assertThat(watchlists).hasSize(databaseSizeBeforeDelete - 1);
     }
-    
-    @Test
-    @Transactional
-    public void findWatchListEnteredByDateAndSource() throws Exception {
-        
-    	Source source = sourceRepository.findOneByName("Mad Money");
-    	assertEquals("Mad Money", source.getName());
-    	
-    	
-    	watchlist.getSources().add(source);
-        watchlistRepository.saveAndFlush(watchlist);
-        
-        // Update the watchlist
-        Watchlist updatedWatchlist = new Watchlist();
-        updatedWatchlist.setSymbol(UPDATED_SYMBOL);
-        updatedWatchlist.setEntryPrice(UPDATED_ENTRY_PRICE);
-        updatedWatchlist.setEntryDate(DEFAULT_ENTRY_DATE);
-        updatedWatchlist.getSources().add(source);
-        watchlistRepository.saveAndFlush(updatedWatchlist);
-        
-        List<Watchlist> watchlist = watchlistRepository.findWatchListEnteredByDateAndSource(source.getName(), DEFAULT_ENTRY_DATE);
-        
-        assertNotNull(watchlist.isEmpty());
-        assertFalse(watchlist.isEmpty());
-        assertEquals(watchlist.size(), 2);
-        
-    }
-    
-    @Test
-    @Transactional
-    public void addAllAlertsToWatchList() throws Exception {
-        
-    	int size = alertTypeRepository.findAll().size();
-    	Source source = sourceRepository.findOneByName("Mad Money");
-    	assertEquals("Mad Money", source.getName());
-        
-        AlertType alertType1 = new AlertType();
-        alertType1.setName("5% Price Increase");
-        alertType1.setFqdn("PricePctIncreaseChecker");
-        alertType1.setParamType(ParamType.PERCENT);
-        alertType1.setParamValue("5");
-        alertType1.setDescription("dummy");
-        
-        AlertType alertType2 = new AlertType();
-        alertType2.setName("10% Price Increase");
-        alertType2.setFqdn("PricePctIncreaseChecker");
-        alertType2.setParamType(ParamType.PERCENT);
-        alertType2.setParamValue("10");
-        alertType2.setDescription("dummy");
-        
-        alertTypeRepository.saveAndFlush(alertType1);
-        alertTypeRepository.saveAndFlush(alertType2);
-        
-        List<AlertType> allAlertTypes = alertTypeRepository.findAll();
-        
-        watchlist.getSources().add(source);
-        watchlist.getAlerts().addAll(allAlertTypes);
-        watchlistRepository.saveAndFlush(watchlist);
-        
-        
-        // Update the watchlist
-        Watchlist updatedWatchlist = new Watchlist();
-        updatedWatchlist.setSymbol(UPDATED_SYMBOL);
-        updatedWatchlist.setEntryPrice(UPDATED_ENTRY_PRICE);
-        updatedWatchlist.setEntryDate(DEFAULT_ENTRY_DATE);
-        updatedWatchlist.getSources().add(source);
-        updatedWatchlist.getAlerts().addAll(allAlertTypes);
-        watchlistRepository.saveAndFlush(updatedWatchlist);
-        
-        List<Watchlist> watchlist = watchlistRepository.findWatchListEnteredByDateAndSource(source.getName(), DEFAULT_ENTRY_DATE);
-        
-        assertNotNull(watchlist.isEmpty());
-        assertFalse(watchlist.isEmpty());
-        assertEquals(watchlist.size(), 2);
-        for (Watchlist item : watchlist) {
-        	assertEquals(size + 2,item.getAlerts().size());
-		}
-        
-    }
-    
-    
 }

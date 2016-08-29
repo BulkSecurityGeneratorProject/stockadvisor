@@ -20,6 +20,8 @@
                 <tr>
                     <th><span>ID</span></th>
                     <th><span>Triggered At</span></th>
+                    <th><span>Description</span></th>
+                    <th><span>Priority</span></th>
                     <th><span>Watchlist</span></th>
                     <th></th>
                 </tr>
@@ -28,6 +30,8 @@
                 <tr ng-repeat="alertHistory in vm.alertHistories track by alertHistory.id">
                     <td><a ui-sref="alert-history-detail({id:alertHistory.id})">{{alertHistory.id}}</a></td>
                     <td>{{alertHistory.triggeredAt | date:'medium'}}</td>
+                    <td>{{alertHistory.description}}</td>
+                    <td>{{alertHistory.priority}}</td>
                     <td>
                         <a ui-sref="watchlist-detail({id:alertHistory.watchlist.id})">{{alertHistory.watchlist.id}}</a>
                     </td>

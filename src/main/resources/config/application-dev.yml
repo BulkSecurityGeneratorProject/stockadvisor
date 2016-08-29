@@ -105,6 +105,7 @@ stockadvisor:
                    schedule: "* 2/5 * * * *"
                  stockalert:
                    schedule: "* 0/5 * * * *"
+                   watchlist.limit:
                  heartbeat:
                    schedule: "* 3/15 * * * *"
                  manualstockentry:

@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.nipuna.stockadvisor.domain.enumeration.AlertPriority;
 
 /**
  * Test class for the AlertHistoryResource REST controller.
@@ -51,6 +52,11 @@ public class AlertHistoryResourceIntTest {
     private static final ZonedDateTime DEFAULT_TRIGGERED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneId.systemDefault());
     private static final ZonedDateTime UPDATED_TRIGGERED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
     private static final String DEFAULT_TRIGGERED_AT_STR = dateTimeFormatter.format(DEFAULT_TRIGGERED_AT);
+    private static final String DEFAULT_DESCRIPTION = "AAAAA";
+    private static final String UPDATED_DESCRIPTION = "BBBBB";
+
+    private static final AlertPriority DEFAULT_PRIORITY = AlertPriority.HIGH;
+    private static final AlertPriority UPDATED_PRIORITY = AlertPriority.MEDIUM;
 
     @Inject
     private AlertHistoryRepository alertHistoryRepository;
@@ -79,6 +85,8 @@ public class AlertHistoryResourceIntTest {
     public void initTest() {
         alertHistory = new AlertHistory();
         alertHistory.setTriggeredAt(DEFAULT_TRIGGERED_AT);
+        alertHistory.setDescription(DEFAULT_DESCRIPTION);
+        alertHistory.setPriority(DEFAULT_PRIORITY);
     }
 
     @Test
@@ -98,6 +106,44 @@ public class AlertHistoryResourceIntTest {
         assertThat(alertHistories).hasSize(databaseSizeBeforeCreate + 1);
         AlertHistory testAlertHistory = alertHistories.get(alertHistories.size() - 1);
         assertThat(testAlertHistory.getTriggeredAt()).isEqualTo(DEFAULT_TRIGGERED_AT);
+        assertThat(testAlertHistory.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testAlertHistory.getPriority()).isEqualTo(DEFAULT_PRIORITY);
+    }
+
+    @Test
+    @Transactional
+    public void checkDescriptionIsRequired() throws Exception {
+        int databaseSizeBeforeTest = alertHistoryRepository.findAll().size();
+        // set the field null
+        alertHistory.setDescription(null);
+
+        // Create the AlertHistory, which fails.
+
+        restAlertHistoryMockMvc.perform(post("/api/alert-histories")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(alertHistory)))
+                .andExpect(status().isBadRequest());
+
+        List<AlertHistory> alertHistories = alertHistoryRepository.findAll();
+        assertThat(alertHistories).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkPriorityIsRequired() throws Exception {
+        int databaseSizeBeforeTest = alertHistoryRepository.findAll().size();
+        // set the field null
+        alertHistory.setPriority(null);
+
+        // Create the AlertHistory, which fails.
+
+        restAlertHistoryMockMvc.perform(post("/api/alert-histories")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(alertHistory)))
+                .andExpect(status().isBadRequest());
+
+        List<AlertHistory> alertHistories = alertHistoryRepository.findAll();
+        assertThat(alertHistories).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -111,7 +157,9 @@ public class AlertHistoryResourceIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(alertHistory.getId().intValue())))
-                .andExpect(jsonPath("$.[*].triggeredAt").value(hasItem(DEFAULT_TRIGGERED_AT_STR)));
+                .andExpect(jsonPath("$.[*].triggeredAt").value(hasItem(DEFAULT_TRIGGERED_AT_STR)))
+                .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+                .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())));
     }
 
     @Test
@@ -125,7 +173,9 @@ public class AlertHistoryResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(alertHistory.getId().intValue()))
-            .andExpect(jsonPath("$.triggeredAt").value(DEFAULT_TRIGGERED_AT_STR));
+            .andExpect(jsonPath("$.triggeredAt").value(DEFAULT_TRIGGERED_AT_STR))
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
+            .andExpect(jsonPath("$.priority").value(DEFAULT_PRIORITY.toString()));
     }
 
     @Test
@@ -147,6 +197,8 @@ public class AlertHistoryResourceIntTest {
         AlertHistory updatedAlertHistory = new AlertHistory();
         updatedAlertHistory.setId(alertHistory.getId());
         updatedAlertHistory.setTriggeredAt(UPDATED_TRIGGERED_AT);
+        updatedAlertHistory.setDescription(UPDATED_DESCRIPTION);
+        updatedAlertHistory.setPriority(UPDATED_PRIORITY);
 
         restAlertHistoryMockMvc.perform(put("/api/alert-histories")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -158,6 +210,8 @@ public class AlertHistoryResourceIntTest {
         assertThat(alertHistories).hasSize(databaseSizeBeforeUpdate);
         AlertHistory testAlertHistory = alertHistories.get(alertHistories.size() - 1);
         assertThat(testAlertHistory.getTriggeredAt()).isEqualTo(UPDATED_TRIGGERED_AT);
+        assertThat(testAlertHistory.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testAlertHistory.getPriority()).isEqualTo(UPDATED_PRIORITY);
     }
 
     @Test

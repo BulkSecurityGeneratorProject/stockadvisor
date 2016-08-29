@@ -1,21 +1,36 @@
 {
-  "relationships": [
-    {
-      "relationshipType": "many-to-one",
-      "relationshipName": "watchlist",
-      "otherEntityName": "watchlist",
-      "otherEntityField": "id"
-    }
-  ],
-  "fields": [
-    {
-      "fieldName": "triggeredAt",
-      "fieldType": "ZonedDateTime"
-    }
-  ],
-  "changelogDate": "20160808230100",
-  "entityTableName": "alert_history",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no"
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "watchlist",
+            "otherEntityName": "watchlist",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "triggeredAt",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "priority",
+            "fieldType": "AlertPriority",
+            "fieldValues": "HIGH,MEDIUM,LOW",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160808230100",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "alert_history",
+    "pagination": "no"
 }

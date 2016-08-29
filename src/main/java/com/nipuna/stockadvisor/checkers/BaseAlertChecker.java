@@ -1,5 +1,6 @@
 package com.nipuna.stockadvisor.checkers;
 
+import com.nipuna.stockadvisor.domain.enumeration.AlertPriority;
 import com.nipuna.stockadvisor.domain.enumeration.ParamType;
 
 import yahoofinance.Stock;
@@ -30,6 +31,11 @@ public abstract class BaseAlertChecker implements AlertChecker {
 
 	protected ParamType getParamType() {
 		return paramType;
+	}
+
+	@Override
+	public AlertPriority getPriority() {
+		return AlertPriority.LOW;
 	}
 
 }

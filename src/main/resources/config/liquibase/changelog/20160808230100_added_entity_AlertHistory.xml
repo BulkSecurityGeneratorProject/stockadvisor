@@ -25,6 +25,14 @@
                 <constraints nullable="true" />
             </column>
             
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="priority" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            
             <column name="watchlist_id" type="bigint">
                 <constraints nullable="true" />
             </column>

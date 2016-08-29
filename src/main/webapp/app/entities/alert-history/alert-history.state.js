@@ -96,6 +96,8 @@
                         entity: function () {
                             return {
                                 triggeredAt: null,
+                                description: null,
+                                priority: null,
                                 id: null
                             };
                         }

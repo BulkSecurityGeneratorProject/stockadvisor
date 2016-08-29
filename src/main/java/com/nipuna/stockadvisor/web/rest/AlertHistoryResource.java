@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -41,7 +42,7 @@ public class AlertHistoryResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<AlertHistory> createAlertHistory(@RequestBody AlertHistory alertHistory) throws URISyntaxException {
+    public ResponseEntity<AlertHistory> createAlertHistory(@Valid @RequestBody AlertHistory alertHistory) throws URISyntaxException {
         log.debug("REST request to save AlertHistory : {}", alertHistory);
         if (alertHistory.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("alertHistory", "idexists", "A new alertHistory cannot already have an ID")).body(null);
@@ -65,7 +66,7 @@ public class AlertHistoryResource {
         method = RequestMethod.PUT,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<AlertHistory> updateAlertHistory(@RequestBody AlertHistory alertHistory) throws URISyntaxException {
+    public ResponseEntity<AlertHistory> updateAlertHistory(@Valid @RequestBody AlertHistory alertHistory) throws URISyntaxException {
         log.debug("REST request to update AlertHistory : {}", alertHistory);
         if (alertHistory.getId() == null) {
             return createAlertHistory(alertHistory);

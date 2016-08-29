@@ -77,3 +77,20 @@ jhipster:
         contactEmail:
         license:
         licenseUrl:
+# ===================================================================
+# Stock advisor specific properties
+# ===================================================================
+# // http://crontab.guru/#0/15_9-17_*_*_MON-FRI
+stockadvisor:
+              jobs:
+                 madmoney:
+                   schedule: "* 2/5 12 * * *"
+                 stockalert:
+                   schedule: "* 0/5 12 * * *"
+                 heartbeat:
+                   schedule: "* 3/15 12 * * *"
+                 manualstockentry:
+                   schedule: "* 2/14 12 * * *"
+              mail:
+               sendto:
+               debug: true

@@ -1,6 +1,5 @@
 package com.nipuna.stockadvisor.checkers;
 
-import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 public class YearHighAlertChecker extends BaseAlertChecker {
@@ -16,4 +15,8 @@ public class YearHighAlertChecker extends BaseAlertChecker {
 		return getStock().getSymbol() + " hit 52 WEEK high " + getStock().getQuote().getPrice().doubleValue();
 	}
 
+	@Override
+	public String shortDesc() {
+		return "52 WK high " + getStock().getQuote().getPrice().doubleValue();
+	}
 }

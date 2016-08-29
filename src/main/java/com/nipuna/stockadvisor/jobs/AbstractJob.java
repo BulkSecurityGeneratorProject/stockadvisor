@@ -55,9 +55,20 @@ public abstract class AbstractJob {
 		}
 
 		sendEmail(getJobId() + " running", sb.toString());
+		
+		//TODO:cleanup
+		ensureJobRunForMoreThanAMin();
 	}
 
 	protected void sendEmail(String subj, String body) {
 		EmailSender.sendEmail(subj, body);
+	}
+	
+	//hack to avoid duplicate run of scheduled tasks...
+	protected void ensureJobRunForMoreThanAMin() {
+		try {
+			Thread.sleep(1000*61);
+		} catch (InterruptedException e) {
+		}
 	}
 }

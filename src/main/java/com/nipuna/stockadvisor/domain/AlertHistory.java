@@ -1,10 +1,23 @@
 package com.nipuna.stockadvisor.domain;
 
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import com.nipuna.stockadvisor.domain.enumeration.AlertPriority;
+
 
 /**
  * A AlertHistory.
@@ -21,6 +34,15 @@ public class AlertHistory implements Serializable {
 
     @Column(name = "triggered_at")
     private ZonedDateTime triggeredAt;
+
+    @NotNull
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false)
+    private AlertPriority priority;
 
     @ManyToOne
     private Watchlist watchlist;
@@ -39,6 +61,22 @@ public class AlertHistory implements Serializable {
 
     public void setTriggeredAt(ZonedDateTime triggeredAt) {
         this.triggeredAt = triggeredAt;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public AlertPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(AlertPriority priority) {
+        this.priority = priority;
     }
 
     public Watchlist getWatchlist() {
@@ -74,6 +112,8 @@ public class AlertHistory implements Serializable {
         return "AlertHistory{" +
             "id=" + id +
             ", triggeredAt='" + triggeredAt + "'" +
+            ", description='" + description + "'" +
+            ", priority='" + priority + "'" +
             '}';
     }
 }

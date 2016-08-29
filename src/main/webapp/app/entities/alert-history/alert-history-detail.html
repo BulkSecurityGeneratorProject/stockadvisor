@@ -8,6 +8,14 @@
         <dd>
             <span>{{vm.alertHistory.triggeredAt | date:'medium'}}</span>
         </dd>
+        <dt><span>Description</span></dt>
+        <dd>
+            <span>{{vm.alertHistory.description}}</span>
+        </dd>
+        <dt><span>Priority</span></dt>
+        <dd>
+            <span>{{vm.alertHistory.priority}}</span>
+        </dd>
         <dt><span>Watchlist</span></dt>
         <dd>
             <a ui-sref="watchlist-detail({id:vm.alertHistory.watchlist.id})">{{vm.alertHistory.watchlist.id}}</a>

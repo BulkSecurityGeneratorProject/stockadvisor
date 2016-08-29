@@ -1,52 +1,52 @@
 {
-  "relationships": [
-    {
-      "relationshipType": "one-to-many",
-      "relationshipName": "alertHistory",
-      "otherEntityName": "alertHistory",
-      "otherEntityRelationshipName": "watchlist"
-    },
-    {
-      "relationshipType": "many-to-many",
-      "relationshipName": "source",
-      "otherEntityName": "source",
-      "otherEntityField": "name",
-      "ownerSide": true
-    },
-    {
-      "relationshipType": "many-to-many",
-      "relationshipName": "alert",
-      "otherEntityName": "alertType",
-      "otherEntityField": "name",
-      "ownerSide": true
-    }
-  ],
-  "fields": [
-    {
-      "fieldName": "symbol",
-      "fieldType": "String",
-      "fieldValidateRules": [
-        "required"
-      ]
-    },
-    {
-      "fieldName": "entryPrice",
-      "fieldType": "Double",
-      "fieldValidateRules": [
-        "required"
-      ]
-    },
-    {
-      "fieldName": "entryDate",
-      "fieldType": "LocalDate",
-      "fieldValidateRules": [
-        "required"
-      ]
-    }
-  ],
-  "changelogDate": "20160808230157",
-  "entityTableName": "watchlist",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no"
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "alertHistory",
+            "otherEntityName": "alertHistory",
+            "otherEntityRelationshipName": "watchlist"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "source",
+            "otherEntityName": "source",
+            "otherEntityField": "name",
+            "ownerSide": true
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "alert",
+            "otherEntityName": "alertType",
+            "otherEntityField": "name",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "symbol",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "entryPrice",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "entryDate",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160808230157",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "watchlist",
+    "pagination": "no"
 }

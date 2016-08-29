@@ -15,4 +15,8 @@ public class YearLowAlertChecker extends BaseAlertChecker {
 		return getStock().getSymbol() + " hit 52 WEEK low " + getStock().getQuote().getPrice().doubleValue();
 	}
 
+	@Override
+	public String shortDesc() {
+		return "52 WK low " + getStock().getQuote().getPrice().doubleValue();
+	}
 }

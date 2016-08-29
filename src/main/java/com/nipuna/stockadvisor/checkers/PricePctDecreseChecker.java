@@ -2,7 +2,8 @@ package com.nipuna.stockadvisor.checkers;
 
 import java.math.BigDecimal;
 
-import yahoofinance.Stock;
+import com.nipuna.stockadvisor.domain.enumeration.AlertPriority;
+
 import yahoofinance.quotes.stock.StockQuote;
 
 public class PricePctDecreseChecker extends BaseAlertChecker {
@@ -16,5 +17,15 @@ public class PricePctDecreseChecker extends BaseAlertChecker {
 	public String desc() {
 		return getStock().getSymbol() + " DOWN by " + Math.abs(getStock().getQuote().getChangeInPercent().doubleValue())
 				+ "%";
+	}
+
+	@Override
+	public String shortDesc() {
+		return "Price " + getStock().getQuote().getChangeInPercent().doubleValue() + "%";
+	}
+
+	@Override
+	public AlertPriority getPriority() {
+		return AlertPriority.HIGH;
 	}
 }
