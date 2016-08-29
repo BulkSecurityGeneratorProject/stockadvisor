@@ -9,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,18 +29,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.nipuna.stockadvisor.domain.enumeration.ParamType;
-
 /**
  * Test class for the AlertTypeResource REST controller.
  *
  * @see AlertTypeResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StockadvisorApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StockadvisorApp.class)
 public class AlertTypeResourceIntTest {
-
     private static final String DEFAULT_NAME = "AAAAA";
     private static final String UPDATED_NAME = "BBBBB";
     private static final String DEFAULT_FQDN = "AAAAA";
@@ -63,6 +58,9 @@ public class AlertTypeResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restAlertTypeMockMvc;
 
     private AlertType alertType;
@@ -77,14 +75,26 @@ public class AlertTypeResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static AlertType createEntity(EntityManager em) {
+        AlertType alertType = new AlertType();
         alertType = new AlertType();
         alertType.setName(DEFAULT_NAME);
         alertType.setFqdn(DEFAULT_FQDN);
         alertType.setParamType(DEFAULT_PARAM_TYPE);
         alertType.setParamValue(DEFAULT_PARAM_VALUE);
         alertType.setDescription(DEFAULT_DESCRIPTION);
+        return alertType;
+    }
+
+    @Before
+    public void initTest() {
+        alertType = createEntity(em);
     }
 
     @Test
@@ -155,7 +165,7 @@ public class AlertTypeResourceIntTest {
         // Get all the alertTypes
         restAlertTypeMockMvc.perform(get("/api/alert-types?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(alertType.getId().intValue())))
                 .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
                 .andExpect(jsonPath("$.[*].fqdn").value(hasItem(DEFAULT_FQDN.toString())))
@@ -173,7 +183,7 @@ public class AlertTypeResourceIntTest {
         // Get the alertType
         restAlertTypeMockMvc.perform(get("/api/alert-types/{id}", alertType.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(alertType.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.fqdn").value(DEFAULT_FQDN.toString()))
@@ -198,8 +208,7 @@ public class AlertTypeResourceIntTest {
         int databaseSizeBeforeUpdate = alertTypeRepository.findAll().size();
 
         // Update the alertType
-        AlertType updatedAlertType = new AlertType();
-        updatedAlertType.setId(alertType.getId());
+        AlertType updatedAlertType = alertTypeRepository.findOne(alertType.getId());
         updatedAlertType.setName(UPDATED_NAME);
         updatedAlertType.setFqdn(UPDATED_FQDN);
         updatedAlertType.setParamType(UPDATED_PARAM_TYPE);

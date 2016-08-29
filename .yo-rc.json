@@ -1,6 +1,6 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "3.5.1",
+    "jhipsterVersion": "3.6.1",
     "baseName": "stockadvisor",
     "packageName": "com.nipuna.stockadvisor",
     "packageFolder": "com/nipuna/stockadvisor",

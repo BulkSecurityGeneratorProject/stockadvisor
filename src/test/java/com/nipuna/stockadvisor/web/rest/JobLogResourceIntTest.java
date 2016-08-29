@@ -9,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.nipuna.stockadvisor.domain.enumeration.JobRunType;
-
 /**
  * Test class for the JobLogResource REST controller.
  *
  * @see JobLogResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StockadvisorApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StockadvisorApp.class)
 public class JobLogResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
     private static final String DEFAULT_JOB_ID = "AAAAA";
     private static final String UPDATED_JOB_ID = "BBBBB";
 
@@ -67,6 +61,9 @@ public class JobLogResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restJobLogMockMvc;
 
     private JobLog jobLog;
@@ -81,12 +78,24 @@ public class JobLogResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static JobLog createEntity(EntityManager em) {
+        JobLog jobLog = new JobLog();
         jobLog = new JobLog();
         jobLog.setJobId(DEFAULT_JOB_ID);
         jobLog.setRunType(DEFAULT_RUN_TYPE);
         jobLog.setRunDate(DEFAULT_RUN_DATE);
+        return jobLog;
+    }
+
+    @Before
+    public void initTest() {
+        jobLog = createEntity(em);
     }
 
     @Test
@@ -137,7 +146,7 @@ public class JobLogResourceIntTest {
         // Get all the jobLogs
         restJobLogMockMvc.perform(get("/api/job-logs?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(jobLog.getId().intValue())))
                 .andExpect(jsonPath("$.[*].jobId").value(hasItem(DEFAULT_JOB_ID.toString())))
                 .andExpect(jsonPath("$.[*].runType").value(hasItem(DEFAULT_RUN_TYPE.toString())))
@@ -153,7 +162,7 @@ public class JobLogResourceIntTest {
         // Get the jobLog
         restJobLogMockMvc.perform(get("/api/job-logs/{id}", jobLog.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(jobLog.getId().intValue()))
             .andExpect(jsonPath("$.jobId").value(DEFAULT_JOB_ID.toString()))
             .andExpect(jsonPath("$.runType").value(DEFAULT_RUN_TYPE.toString()))
@@ -176,8 +185,7 @@ public class JobLogResourceIntTest {
         int databaseSizeBeforeUpdate = jobLogRepository.findAll().size();
 
         // Update the jobLog
-        JobLog updatedJobLog = new JobLog();
-        updatedJobLog.setId(jobLog.getId());
+        JobLog updatedJobLog = jobLogRepository.findOne(jobLog.getId());
         updatedJobLog.setJobId(UPDATED_JOB_ID);
         updatedJobLog.setRunType(UPDATED_RUN_TYPE);
         updatedJobLog.setRunDate(UPDATED_RUN_DATE);

@@ -103,7 +103,7 @@
                         }
                     }
                 }).result.then(function() {
-                    $state.go('manual-entry-stock', null, { reload: true });
+                    $state.go('manual-entry-stock', null, { reload: 'manual-entry-stock' });
                 }, function() {
                     $state.go('manual-entry-stock');
                 });
@@ -128,7 +128,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('manual-entry-stock', null, { reload: true });
+                    $state.go('manual-entry-stock', null, { reload: 'manual-entry-stock' });
                 }, function() {
                     $state.go('^');
                 });
@@ -152,7 +152,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('manual-entry-stock', null, { reload: true });
+                    $state.go('manual-entry-stock', null, { reload: 'manual-entry-stock' });
                 }, function() {
                     $state.go('^');
                 });

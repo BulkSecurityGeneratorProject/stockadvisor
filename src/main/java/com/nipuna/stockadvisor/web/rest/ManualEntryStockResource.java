@@ -2,6 +2,7 @@ package com.nipuna.stockadvisor.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nipuna.stockadvisor.domain.ManualEntryStock;
+
 import com.nipuna.stockadvisor.repository.ManualEntryStockRepository;
 import com.nipuna.stockadvisor.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class ManualEntryStockResource {
         
     @Inject
     private ManualEntryStockRepository manualEntryStockRepository;
-    
+
     /**
      * POST  /manual-entry-stocks : Create a new manualEntryStock.
      *

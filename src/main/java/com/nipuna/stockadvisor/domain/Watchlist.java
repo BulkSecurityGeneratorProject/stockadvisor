@@ -44,9 +44,8 @@ public class Watchlist implements Serializable {
                joinColumns = @JoinColumn(name="watchlists_id", referencedColumnName="ID"),
                inverseJoinColumns = @JoinColumn(name="sources_id", referencedColumnName="ID"))
     private Set<Source> sources = new HashSet<>();
-    
-    //Solve “failed to lazily initialize a collection of role” exception
-    @ManyToMany(fetch=FetchType.EAGER)
+
+    @ManyToMany
     @JoinTable(name = "watchlist_alert",
                joinColumns = @JoinColumn(name="watchlists_id", referencedColumnName="ID"),
                inverseJoinColumns = @JoinColumn(name="alerts_id", referencedColumnName="ID"))

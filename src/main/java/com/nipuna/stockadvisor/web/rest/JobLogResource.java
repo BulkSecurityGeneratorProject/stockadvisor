@@ -2,6 +2,7 @@ package com.nipuna.stockadvisor.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nipuna.stockadvisor.domain.JobLog;
+
 import com.nipuna.stockadvisor.repository.JobLogRepository;
 import com.nipuna.stockadvisor.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class JobLogResource {
         
     @Inject
     private JobLogRepository jobLogRepository;
-    
+
     /**
      * POST  /job-logs : Create a new jobLog.
      *

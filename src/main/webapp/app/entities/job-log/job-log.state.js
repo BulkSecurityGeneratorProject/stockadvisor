@@ -103,7 +103,7 @@
                         }
                     }
                 }).result.then(function() {
-                    $state.go('job-log', null, { reload: true });
+                    $state.go('job-log', null, { reload: 'job-log' });
                 }, function() {
                     $state.go('job-log');
                 });
@@ -128,7 +128,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('job-log', null, { reload: true });
+                    $state.go('job-log', null, { reload: 'job-log' });
                 }, function() {
                     $state.go('^');
                 });
@@ -152,7 +152,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('job-log', null, { reload: true });
+                    $state.go('job-log', null, { reload: 'job-log' });
                 }, function() {
                     $state.go('^');
                 });

@@ -14,7 +14,6 @@ import com.nipuna.stockadvisor.domain.enumeration.JobRunType;
  */
 @Entity
 @Table(name = "job_log")
-@NamedQuery(name="JobLog.findAll", query="SELECT j FROM JobLog j")
 public class JobLog implements Serializable {
 
     private static final long serialVersionUID = 1L;

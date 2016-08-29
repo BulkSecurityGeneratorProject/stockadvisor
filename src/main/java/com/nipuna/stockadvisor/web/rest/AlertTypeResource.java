@@ -2,6 +2,7 @@ package com.nipuna.stockadvisor.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nipuna.stockadvisor.domain.AlertType;
+
 import com.nipuna.stockadvisor.repository.AlertTypeRepository;
 import com.nipuna.stockadvisor.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class AlertTypeResource {
         
     @Inject
     private AlertTypeRepository alertTypeRepository;
-    
+
     /**
      * POST  /alert-types : Create a new alertType.
      *

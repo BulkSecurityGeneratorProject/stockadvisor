@@ -103,7 +103,7 @@
                         }
                     }
                 }).result.then(function() {
-                    $state.go('watchlist', null, { reload: true });
+                    $state.go('watchlist', null, { reload: 'watchlist' });
                 }, function() {
                     $state.go('watchlist');
                 });
@@ -128,7 +128,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('watchlist', null, { reload: true });
+                    $state.go('watchlist', null, { reload: 'watchlist' });
                 }, function() {
                     $state.go('^');
                 });
@@ -152,7 +152,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('watchlist', null, { reload: true });
+                    $state.go('watchlist', null, { reload: 'watchlist' });
                 }, function() {
                     $state.go('^');
                 });

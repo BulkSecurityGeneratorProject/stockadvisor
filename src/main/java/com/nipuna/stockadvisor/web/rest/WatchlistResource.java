@@ -2,6 +2,7 @@ package com.nipuna.stockadvisor.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nipuna.stockadvisor.domain.Watchlist;
+
 import com.nipuna.stockadvisor.repository.WatchlistRepository;
 import com.nipuna.stockadvisor.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class WatchlistResource {
         
     @Inject
     private WatchlistRepository watchlistRepository;
-    
+
     /**
      * POST  /watchlists : Create a new watchlist.
      *

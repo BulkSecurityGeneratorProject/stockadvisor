@@ -9,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -31,18 +30,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the WatchlistResource REST controller.
  *
  * @see WatchlistResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StockadvisorApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StockadvisorApp.class)
 public class WatchlistResourceIntTest {
-
     private static final String DEFAULT_SYMBOL = "AAAAA";
     private static final String UPDATED_SYMBOL = "BBBBB";
 
@@ -61,6 +56,9 @@ public class WatchlistResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restWatchlistMockMvc;
 
     private Watchlist watchlist;
@@ -75,12 +73,24 @@ public class WatchlistResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Watchlist createEntity(EntityManager em) {
+        Watchlist watchlist = new Watchlist();
         watchlist = new Watchlist();
         watchlist.setSymbol(DEFAULT_SYMBOL);
         watchlist.setEntryPrice(DEFAULT_ENTRY_PRICE);
         watchlist.setEntryDate(DEFAULT_ENTRY_DATE);
+        return watchlist;
+    }
+
+    @Before
+    public void initTest() {
+        watchlist = createEntity(em);
     }
 
     @Test
@@ -167,7 +177,7 @@ public class WatchlistResourceIntTest {
         // Get all the watchlists
         restWatchlistMockMvc.perform(get("/api/watchlists?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(watchlist.getId().intValue())))
                 .andExpect(jsonPath("$.[*].symbol").value(hasItem(DEFAULT_SYMBOL.toString())))
                 .andExpect(jsonPath("$.[*].entryPrice").value(hasItem(DEFAULT_ENTRY_PRICE.doubleValue())))
@@ -183,7 +193,7 @@ public class WatchlistResourceIntTest {
         // Get the watchlist
         restWatchlistMockMvc.perform(get("/api/watchlists/{id}", watchlist.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(watchlist.getId().intValue()))
             .andExpect(jsonPath("$.symbol").value(DEFAULT_SYMBOL.toString()))
             .andExpect(jsonPath("$.entryPrice").value(DEFAULT_ENTRY_PRICE.doubleValue()))
@@ -206,8 +216,7 @@ public class WatchlistResourceIntTest {
         int databaseSizeBeforeUpdate = watchlistRepository.findAll().size();
 
         // Update the watchlist
-        Watchlist updatedWatchlist = new Watchlist();
-        updatedWatchlist.setId(watchlist.getId());
+        Watchlist updatedWatchlist = watchlistRepository.findOne(watchlist.getId());
         updatedWatchlist.setSymbol(UPDATED_SYMBOL);
         updatedWatchlist.setEntryPrice(UPDATED_ENTRY_PRICE);
         updatedWatchlist.setEntryDate(UPDATED_ENTRY_DATE);

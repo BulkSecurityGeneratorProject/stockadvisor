@@ -105,7 +105,7 @@
                         }
                     }
                 }).result.then(function() {
-                    $state.go('alert-type', null, { reload: true });
+                    $state.go('alert-type', null, { reload: 'alert-type' });
                 }, function() {
                     $state.go('alert-type');
                 });
@@ -130,7 +130,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('alert-type', null, { reload: true });
+                    $state.go('alert-type', null, { reload: 'alert-type' });
                 }, function() {
                     $state.go('^');
                 });
@@ -154,7 +154,7 @@
                         }]
                     }
                 }).result.then(function() {
-                    $state.go('alert-type', null, { reload: true });
+                    $state.go('alert-type', null, { reload: 'alert-type' });
                 }, function() {
                     $state.go('^');
                 });

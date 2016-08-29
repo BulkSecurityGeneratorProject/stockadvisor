@@ -34,7 +34,7 @@ public class AlertType implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "param_type")
-    private ParamType paramType=ParamType.NOT_APPLICABLE;
+    private ParamType paramType;
 
     @Column(name = "param_value")
     private String paramValue;

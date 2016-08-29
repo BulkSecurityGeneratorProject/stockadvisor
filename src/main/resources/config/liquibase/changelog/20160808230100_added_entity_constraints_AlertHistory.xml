@@ -10,7 +10,7 @@
         
         <addForeignKeyConstraint baseColumnNames="watchlist_id"
                                  baseTableName="alert_history"
-                                 constraintName="fk_alerthistory_watchlist_id"
+                                 constraintName="fk_alert_history_watchlist_id"
                                  referencedColumnNames="id"
                                  referencedTableName="watchlist"/>
 

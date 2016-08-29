@@ -9,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,20 +33,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.nipuna.stockadvisor.domain.enumeration.AlertPriority;
-
 /**
  * Test class for the AlertHistoryResource REST controller.
  *
  * @see AlertHistoryResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StockadvisorApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StockadvisorApp.class)
 public class AlertHistoryResourceIntTest {
-
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
-
 
     private static final ZonedDateTime DEFAULT_TRIGGERED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneId.systemDefault());
     private static final ZonedDateTime UPDATED_TRIGGERED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
@@ -67,6 +61,9 @@ public class AlertHistoryResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restAlertHistoryMockMvc;
 
     private AlertHistory alertHistory;
@@ -81,12 +78,24 @@ public class AlertHistoryResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static AlertHistory createEntity(EntityManager em) {
+        AlertHistory alertHistory = new AlertHistory();
         alertHistory = new AlertHistory();
         alertHistory.setTriggeredAt(DEFAULT_TRIGGERED_AT);
         alertHistory.setDescription(DEFAULT_DESCRIPTION);
         alertHistory.setPriority(DEFAULT_PRIORITY);
+        return alertHistory;
+    }
+
+    @Before
+    public void initTest() {
+        alertHistory = createEntity(em);
     }
 
     @Test
@@ -155,7 +164,7 @@ public class AlertHistoryResourceIntTest {
         // Get all the alertHistories
         restAlertHistoryMockMvc.perform(get("/api/alert-histories?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(alertHistory.getId().intValue())))
                 .andExpect(jsonPath("$.[*].triggeredAt").value(hasItem(DEFAULT_TRIGGERED_AT_STR)))
                 .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
@@ -171,7 +180,7 @@ public class AlertHistoryResourceIntTest {
         // Get the alertHistory
         restAlertHistoryMockMvc.perform(get("/api/alert-histories/{id}", alertHistory.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(alertHistory.getId().intValue()))
             .andExpect(jsonPath("$.triggeredAt").value(DEFAULT_TRIGGERED_AT_STR))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
@@ -194,8 +203,7 @@ public class AlertHistoryResourceIntTest {
         int databaseSizeBeforeUpdate = alertHistoryRepository.findAll().size();
 
         // Update the alertHistory
-        AlertHistory updatedAlertHistory = new AlertHistory();
-        updatedAlertHistory.setId(alertHistory.getId());
+        AlertHistory updatedAlertHistory = alertHistoryRepository.findOne(alertHistory.getId());
         updatedAlertHistory.setTriggeredAt(UPDATED_TRIGGERED_AT);
         updatedAlertHistory.setDescription(UPDATED_DESCRIPTION);
         updatedAlertHistory.setPriority(UPDATED_PRIORITY);

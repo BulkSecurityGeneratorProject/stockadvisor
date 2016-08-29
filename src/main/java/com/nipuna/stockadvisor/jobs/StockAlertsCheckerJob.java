@@ -47,7 +47,7 @@ public class StockAlertsCheckerJob extends AbstractJob {
 
 	@Scheduled(cron = "${stockadvisor.jobs.stockalert.schedule}", zone = "America/New_York")
 	public void executeJob() throws IOException {
-		List<Watchlist> items = watchListRepository.findAll();
+		List<Watchlist> items = watchListRepository.findAllWithEagerRelationships();
 
 		if (items.isEmpty()) {
 			LOG.info("~~~~ No WatchLists found ~~~~");
@@ -237,7 +237,7 @@ public class StockAlertsCheckerJob extends AbstractJob {
 		sb.append("\thttp://finviz.com/quote.ashx?t="+watchlist.getSymbol()+ "\n\n");
 		sb.append("\thttp://stocktwits.com/symbol/"+watchlist.getSymbol()+ "\n\n");
 
-		sb.append ("\n\n\n\n" );
+		sb.append ("\n\n" );
 		return sb.toString();
 	}
 }

@@ -9,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,24 +21,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the SourceResource REST controller.
  *
  * @see SourceResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StockadvisorApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StockadvisorApp.class)
 public class SourceResourceIntTest {
-
     private static final String DEFAULT_NAME = "AAAAA";
     private static final String UPDATED_NAME = "BBBBB";
     private static final String DEFAULT_DESCRIPTION = "AAAAA";
@@ -57,6 +52,9 @@ public class SourceResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restSourceMockMvc;
 
     private Source source;
@@ -71,12 +69,24 @@ public class SourceResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Source createEntity(EntityManager em) {
+        Source source = new Source();
         source = new Source();
         source.setName(DEFAULT_NAME);
         source.setDescription(DEFAULT_DESCRIPTION);
         source.setLink(DEFAULT_LINK);
+        return source;
+    }
+
+    @Before
+    public void initTest() {
+        source = createEntity(em);
     }
 
     @Test
@@ -127,7 +137,7 @@ public class SourceResourceIntTest {
         // Get all the sources
         restSourceMockMvc.perform(get("/api/sources?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(source.getId().intValue())))
                 .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
                 .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
@@ -143,7 +153,7 @@ public class SourceResourceIntTest {
         // Get the source
         restSourceMockMvc.perform(get("/api/sources/{id}", source.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(source.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
@@ -166,8 +176,7 @@ public class SourceResourceIntTest {
         int databaseSizeBeforeUpdate = sourceRepository.findAll().size();
 
         // Update the source
-        Source updatedSource = new Source();
-        updatedSource.setId(source.getId());
+        Source updatedSource = sourceRepository.findOne(source.getId());
         updatedSource.setName(UPDATED_NAME);
         updatedSource.setDescription(UPDATED_DESCRIPTION);
         updatedSource.setLink(UPDATED_LINK);

@@ -2,6 +2,7 @@ package com.nipuna.stockadvisor.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nipuna.stockadvisor.domain.Source;
+
 import com.nipuna.stockadvisor.repository.SourceRepository;
 import com.nipuna.stockadvisor.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class SourceResource {
         
     @Inject
     private SourceRepository sourceRepository;
-    
+
     /**
      * POST  /sources : Create a new source.
      *

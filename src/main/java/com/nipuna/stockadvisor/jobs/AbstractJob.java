@@ -1,17 +1,18 @@
 package com.nipuna.stockadvisor.jobs;
 
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nipuna.stockadvisor.domain.JobLog;
 import com.nipuna.stockadvisor.domain.enumeration.JobRunType;
 import com.nipuna.stockadvisor.repository.JobLogRepository;
 import com.nipuna.stockadvisor.util.EmailSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractJob {
 	protected static final Logger LOG = LoggerFactory.getLogger(AbstractJob.class.getName());
@@ -48,26 +49,27 @@ public abstract class AbstractJob {
 		jobLogRepository.save(log);
 
 		StringBuffer sb = new StringBuffer();
-		List<JobLog> logs = jobLogRepository.findByJobId(getJobId());
+		ZonedDateTime since1Day = ZonedDateTime.now().minus(Period.ofDays(1));
+		List<JobLog> logs = jobLogRepository.findByJobIdSince(getJobId(), since1Day);
 		for (JobLog jobLog : logs) {
 			sb.append(jobLog.getRunDate().withZoneSameLocal(ZONEID_EST));
 			sb.append("\n");
 		}
 
 		sendEmail(getJobId() + " running", sb.toString());
-		
-		//TODO:cleanup
+
+		// TODO:cleanup
 		ensureJobRunForMoreThanAMin();
 	}
 
 	protected void sendEmail(String subj, String body) {
 		EmailSender.sendEmail(subj, body);
 	}
-	
-	//hack to avoid duplicate run of scheduled tasks...
+
+	// hack to avoid duplicate run of scheduled tasks...
 	protected void ensureJobRunForMoreThanAMin() {
 		try {
-			Thread.sleep(1000*61);
+			Thread.sleep(1000 * 61);
 		} catch (InterruptedException e) {
 		}
 	}

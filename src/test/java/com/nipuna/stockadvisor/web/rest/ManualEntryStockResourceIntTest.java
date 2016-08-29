@@ -9,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -31,18 +30,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the ManualEntryStockResource REST controller.
  *
  * @see ManualEntryStockResource
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StockadvisorApp.class)
-@WebAppConfiguration
-@IntegrationTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StockadvisorApp.class)
 public class ManualEntryStockResourceIntTest {
-
     private static final String DEFAULT_SYMBOLS = "AAAAA";
     private static final String UPDATED_SYMBOLS = "BBBBB";
 
@@ -60,6 +55,9 @@ public class ManualEntryStockResourceIntTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private EntityManager em;
+
     private MockMvc restManualEntryStockMockMvc;
 
     private ManualEntryStock manualEntryStock;
@@ -74,12 +72,24 @@ public class ManualEntryStockResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    @Before
-    public void initTest() {
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static ManualEntryStock createEntity(EntityManager em) {
+        ManualEntryStock manualEntryStock = new ManualEntryStock();
         manualEntryStock = new ManualEntryStock();
         manualEntryStock.setSymbols(DEFAULT_SYMBOLS);
         manualEntryStock.setEntryDate(DEFAULT_ENTRY_DATE);
         manualEntryStock.setProcessed(DEFAULT_PROCESSED);
+        return manualEntryStock;
+    }
+
+    @Before
+    public void initTest() {
+        manualEntryStock = createEntity(em);
     }
 
     @Test
@@ -166,7 +176,7 @@ public class ManualEntryStockResourceIntTest {
         // Get all the manualEntryStocks
         restManualEntryStockMockMvc.perform(get("/api/manual-entry-stocks?sort=id,desc"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(manualEntryStock.getId().intValue())))
                 .andExpect(jsonPath("$.[*].symbols").value(hasItem(DEFAULT_SYMBOLS.toString())))
                 .andExpect(jsonPath("$.[*].entryDate").value(hasItem(DEFAULT_ENTRY_DATE.toString())))
@@ -182,7 +192,7 @@ public class ManualEntryStockResourceIntTest {
         // Get the manualEntryStock
         restManualEntryStockMockMvc.perform(get("/api/manual-entry-stocks/{id}", manualEntryStock.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(manualEntryStock.getId().intValue()))
             .andExpect(jsonPath("$.symbols").value(DEFAULT_SYMBOLS.toString()))
             .andExpect(jsonPath("$.entryDate").value(DEFAULT_ENTRY_DATE.toString()))
@@ -205,8 +215,7 @@ public class ManualEntryStockResourceIntTest {
         int databaseSizeBeforeUpdate = manualEntryStockRepository.findAll().size();
 
         // Update the manualEntryStock
-        ManualEntryStock updatedManualEntryStock = new ManualEntryStock();
-        updatedManualEntryStock.setId(manualEntryStock.getId());
+        ManualEntryStock updatedManualEntryStock = manualEntryStockRepository.findOne(manualEntryStock.getId());
         updatedManualEntryStock.setSymbols(UPDATED_SYMBOLS);
         updatedManualEntryStock.setEntryDate(UPDATED_ENTRY_DATE);
         updatedManualEntryStock.setProcessed(UPDATED_PROCESSED);

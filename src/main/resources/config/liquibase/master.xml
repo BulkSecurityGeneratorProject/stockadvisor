@@ -10,13 +10,13 @@
     <include file="classpath:config/liquibase/changelog/20160808230157_added_entity_Watchlist.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20160808230158_added_entity_Source.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20160808230159_added_entity_AlertType.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20160821055029_added_entity_ManualEntryStock.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="classpath:config/liquibase/changelog/20160808230100_added_entity_constraints_AlertHistory.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20160808230157_added_entity_constraints_Watchlist.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:config/liquibase/changelog/20160812230159_load_Source.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+    <include file="classpath:config/liquibase/changelog/20160812230159_load_Source.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/201608152230159_load_AlertType.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:config/liquibase/changelog/20160821055029_added_entity_ManualEntryStock.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/201608222230159_load_ManualEntryStock.xml" relativeToChangelogFile="false"/>
     
 </databaseChangeLog>
