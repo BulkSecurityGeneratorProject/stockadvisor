@@ -1,8 +1,10 @@
 package com.nipuna.stockadvisor.jobs;
 
-import java.time.Period;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,8 +18,10 @@ import com.nipuna.stockadvisor.util.EmailSender;
 
 public abstract class AbstractJob {
 	protected static final Logger LOG = LoggerFactory.getLogger(AbstractJob.class.getName());
-
 	protected static final ZoneId ZONEID_EST = ZoneId.of("America/New_York");
+	protected static final ZonedDateTime LAST_12_HOURS = ZonedDateTime.now().minusHours(12);
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd hh:mm a");
+	
 	@Autowired
 	private JobLogRepository jobLogRepository;
 
@@ -49,10 +53,11 @@ public abstract class AbstractJob {
 		jobLogRepository.save(log);
 
 		StringBuffer sb = new StringBuffer();
-		ZonedDateTime since1Day = ZonedDateTime.now().minus(Period.ofDays(1));
-		List<JobLog> logs = jobLogRepository.findByJobIdSince(getJobId(), since1Day);
+		List<JobLog> logs = jobLogRepository.findByJobIdAndRunDateAfterOrderByRunDateDesc(getJobId(), LAST_12_HOURS);
 		for (JobLog jobLog : logs) {
-			sb.append(jobLog.getRunDate().withZoneSameLocal(ZONEID_EST));
+			//2016-09-04T11:57:54-04:00[America/New_York]
+//			sb.append(jobLog.getRunDate().withZoneSameLocal(ZONEID_EST));
+			sb.append(jobLog.getRunDate().format(DATE_FORMATTER) +" ("+jobLog.getRunDate().withZoneSameLocal(ZONEID_EST).format(DATE_FORMATTER)+")");
 			sb.append("\n");
 		}
 
@@ -72,5 +77,14 @@ public abstract class AbstractJob {
 			Thread.sleep(1000 * 61);
 		} catch (InterruptedException e) {
 		}
+	}
+
+	public String getStackTrace(Throwable t) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw, true);
+		t.printStackTrace(pw);
+		pw.flush();
+		sw.flush();
+		return sw.toString();
 	}
 }

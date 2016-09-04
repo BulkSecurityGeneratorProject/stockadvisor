@@ -15,6 +15,8 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nipuna.stockadvisor.StockadvisorApp;
 import com.nipuna.stockadvisor.domain.JobLog;
 import com.nipuna.stockadvisor.domain.enumeration.JobRunType;
+import com.nipuna.stockadvisor.domain.util.JSR310DateConverters.ZonedDateTimeToDateConverter;
 import com.nipuna.stockadvisor.repository.JobLogRepository;
 
 @RunWith(SpringRunner.class)
@@ -41,6 +44,7 @@ public class StockAdvisorRepositoryTests {
 	private static final ZonedDateTime UPDATED_RUN_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 	private static final String DEFAULT_RUN_DATE_STR = dateTimeFormatter.format(DEFAULT_RUN_DATE);
 
+	   private static final Logger LOG = LoggerFactory.getLogger(StockAdvisorRepositoryTests.class);
 	@Inject
 	private JobLogRepository jobLogRepository;
 
@@ -75,7 +79,8 @@ public class StockAdvisorRepositoryTests {
 		int databaseSizeBeforeCreate = jobLogRepository.findAll().size();
 
 		// Create the JobLog
-
+		jobLogRepository.saveAndFlush(jobLog);
+		
 		// Validate the JobLog in the database
 		List<JobLog> jobLogs = jobLogRepository.findAll();
 		assertThat(jobLogs).hasSize(databaseSizeBeforeCreate + 1);
@@ -87,25 +92,38 @@ public class StockAdvisorRepositoryTests {
 
 	@Test
 	@Transactional
-	public void findByJobIdSince() throws Exception {
+	public void findByJobIdAndRunDateAfter() throws Exception {
 		int databaseSizeBeforeCreate = jobLogRepository.findAll().size();
 		ZonedDateTime now = ZonedDateTime.now();
 		JobLog newLog = createEntity(em);
-		newLog.setRunDate(now.minus(Period.ofDays(5)));
 		newLog = createEntity(em);
+		newLog.setRunDate(now.minusHours(8));
 		jobLogRepository.saveAndFlush(newLog);
-		newLog.setRunDate(now.minus(Period.ofDays(5)));
 		newLog = createEntity(em);
+		newLog.setRunDate(now.minusHours(6));
 		jobLogRepository.saveAndFlush(newLog);
-		newLog.setRunDate(now.minus(Period.ofDays(1)));
 		newLog = createEntity(em);
+		newLog.setRunDate(now.minus(Period.ofDays(5)).plusHours(10));
+		jobLogRepository.saveAndFlush(newLog);
+		newLog = createEntity(em);
+		newLog.setRunDate(now.minusHours(4));
 		jobLogRepository.saveAndFlush(newLog);
 
+		
 		List<JobLog> jobLogs = jobLogRepository.findAll();
-		assertThat(jobLogs).hasSize(databaseSizeBeforeCreate + 3);
+		
+		for (JobLog jobLog : jobLogs) {
+			LOG.info(jobLog.getJobId() +" "+jobLog.getRunDate());
+		}
+		assertThat(jobLogs).hasSize(databaseSizeBeforeCreate + 4);
 
-		List<JobLog> filteredLogs = jobLogRepository.findByJobIdSince(DEFAULT_JOB_ID, now.minus(Period.ofDays(1)));
-		assertThat(filteredLogs).hasSize(databaseSizeBeforeCreate + 1);
+		List<JobLog> filteredLogs = jobLogRepository.findByJobIdAndRunDateAfterOrderByRunDateDesc(DEFAULT_JOB_ID, now.minusHours(10));
+		LOG.info("filteredLogs size: "+filteredLogs.size());
+		for (JobLog jobLog : filteredLogs) {
+			LOG.info(jobLog.getJobId() +" "+jobLog.getRunDate() +" "+ZonedDateTimeToDateConverter.INSTANCE.convert(jobLog.getRunDate()));
+		}
+		assertThat(filteredLogs).hasSize(databaseSizeBeforeCreate + 3);
 	}
+	
 
 }

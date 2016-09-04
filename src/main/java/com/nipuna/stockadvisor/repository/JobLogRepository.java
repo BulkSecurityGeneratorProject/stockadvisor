@@ -14,7 +14,5 @@ import com.nipuna.stockadvisor.domain.JobLog;
  */
 @SuppressWarnings("unused")
 public interface JobLogRepository extends JpaRepository<JobLog,Long> {
-
-	@Query("select jobLog from JobLog jobLog where jobLog.jobId = :jobId and jobLog.runDate >= :since")
-	List<JobLog> findByJobIdSince(@Param("jobId") String jobId, @Param("since") ZonedDateTime since);
+	List<JobLog> findByJobIdAndRunDateAfterOrderByRunDateDesc(String jobId, ZonedDateTime runDate);
 }
