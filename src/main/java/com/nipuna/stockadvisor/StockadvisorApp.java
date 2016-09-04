@@ -70,7 +70,8 @@ public class StockadvisorApp {
             env.getProperty("server.port"),
             InetAddress.getLocalHost().getHostAddress(),
             env.getProperty("server.port"));
-
+        	
+        log.info("SPRING_MAIL_USERNAME:"+env.getProperty("SPRING_MAIL_USERNAME"));
     }
 
 }

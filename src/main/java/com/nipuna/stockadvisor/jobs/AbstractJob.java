@@ -25,6 +25,9 @@ public abstract class AbstractJob {
 	@Autowired
 	private JobLogRepository jobLogRepository;
 
+	@Autowired
+	private EmailSender emailSender;
+	
 	public abstract void executeJob() throws Exception;
 
 	public void runJob() throws Exception {
@@ -68,7 +71,7 @@ public abstract class AbstractJob {
 	}
 
 	protected void sendEmail(String subj, String body) {
-		EmailSender.sendEmail(subj, body);
+		emailSender.sendEmail(subj, body);
 	}
 
 	// hack to avoid duplicate run of scheduled tasks...

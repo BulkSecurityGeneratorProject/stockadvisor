@@ -22,7 +22,6 @@ import com.nipuna.stockadvisor.domain.Watchlist;
 import com.nipuna.stockadvisor.repository.AlertTypeRepository;
 import com.nipuna.stockadvisor.repository.SourceRepository;
 import com.nipuna.stockadvisor.repository.WatchlistRepository;
-import com.nipuna.stockadvisor.util.EmailSender;
 
 @Component
 @ConditionalOnProperty(prefix = "stockadvisor.jobs.madmoney", name = "schedule")
@@ -91,7 +90,7 @@ public class MadMoneyStockScraperJob extends AbstractJob {
 		}
 		
 		if(count > 0){
-			EmailSender.sendEmail("Mad Money Stocks for " + callDate, sb.toString());
+			sendEmail("Mad Money Stocks for " + callDate, sb.toString());
 		}
 		
 		performAudit();

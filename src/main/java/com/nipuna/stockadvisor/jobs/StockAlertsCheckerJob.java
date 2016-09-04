@@ -23,7 +23,6 @@ import com.nipuna.stockadvisor.domain.AlertType;
 import com.nipuna.stockadvisor.domain.Watchlist;
 import com.nipuna.stockadvisor.repository.AlertHistoryRepository;
 import com.nipuna.stockadvisor.repository.WatchlistRepository;
-import com.nipuna.stockadvisor.util.EmailSender;
 import com.nipuna.stockadvisor.util.NumerToWordUtil;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringEscapeUtils;
@@ -144,14 +143,14 @@ public class StockAlertsCheckerJob extends AbstractJob {
 						if (debugMail) {
 							body += "LOG: " + log.toString() + " \n\n\n\n  ERROR LOG: " + errorLog.toString();
 						}
-						EmailSender.sendEmail(subject, body);
+						sendEmail(subject, body);
 					}
 				}
 			}
 			performAudit();
 			LOG.info("Waitinig for NEXT RUN...");
 		} catch (Exception e) {
-			EmailSender.sendEmail("#####" + getJobId() + " EXCEPTION ##### ", "stacktrace:\n" + getStackTrace(e));
+			sendEmail("#####" + getJobId() + " EXCEPTION ##### ", "stacktrace:\n" + getStackTrace(e));
 			ensureJobRunForMoreThanAMin();
 		}
 	}
